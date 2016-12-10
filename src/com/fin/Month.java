@@ -2,13 +2,18 @@ package com.fin;
 
 public class Month {
 	private Field initialValue;
-	private Field apr;
+	private Field mpr;
 	private Field payment;
 	private Field finalValue;
 	
-	// (initial-payment)*(1+apr)=final
-	
 	//payment=(initial*apr)/(1-(1/(1+r)^2))
+	
+	// (initial-payment)*(1+apr)=final
+
+	// initial=(final+payment)/(1+mpr)
+	// mpr=((final+payment)/initial)-1
+	// payment=(initial*(1+mpr))-final
+	// final=(initial*(1+mpr))-payment
 	
 	public Month(Field...fields) {
 		for (Field field : fields) {
@@ -16,8 +21,8 @@ public class Month {
 			case INITIAL:
 				this.initialValue = field;
 				break;
-			case APR:
-				this.apr = field;
+			case MPR:
+				this.mpr = field;
 				break;
 			case PAYMENT:
 				this.payment = field;
@@ -33,7 +38,7 @@ public class Month {
 		int i = 0;
 		if(this.initialValue == null)
 			i++;
-		if(this.apr == null)
+		if(this.mpr == null)
 			i++;
 		if(this.payment == null)
 			i++;
@@ -47,12 +52,17 @@ public class Month {
 	}
 	
 	public void setInitialValue(double initialValue) {
-		this.initialValue = new Field(FieldType.FINAL,initialValue);
+		this.initialValue = new Field(FieldType.INITIAL,initialValue);
 	}
-	
+
+
+	// initial=(final+payment)/(1+mpr)
+	// mpr=((final+payment)/initial)-1
+	// payment=(initial*(1+mpr))-final
+	// final=(initial*(1+mpr))-payment
 	public boolean calculateInitialValue() {
 		if(!(this.getNumNullFields() > 1)) {
-			this.setInitialValue((this.getFinalValue()/(1+this.getAPR()))+this.getPayment());
+			this.setInitialValue((this.getFinalValue()+this.getPayment())/(1+this.getMPR()));
 			return true;
 		}
 		else {
@@ -60,17 +70,22 @@ public class Month {
 		}
 	}
 	
-	public double getAPR() {
-		return this.apr.getValue();
+	public double getMPR() {
+		return this.mpr.getValue();
 	}
 	
-	public void setAPR(double apr) {
-		this.apr = new Field(FieldType.FINAL,apr);
+	public void setMPR(double mpr) {
+		this.mpr = new Field(FieldType.MPR,mpr);
 	}
-	
-	public boolean calculateAPR() {
+
+
+	// initial=(final+payment)/(1+mpr)
+	// mpr=((final+payment)/initial)-1
+	// payment=(initial*(1+mpr))-final
+	// final=(initial*(1+mpr))-payment
+	public boolean calculateMPR() {
 		if(!(this.getNumNullFields() > 1)) {
-			this.setAPR((this.getFinalValue()/(this.getInitialValue()-this.getPayment()))-1);
+			this.setMPR(((this.getFinalValue()+this.getPayment())/this.getInitialValue())-1);
 			return true;
 		}
 		else {
@@ -83,12 +98,17 @@ public class Month {
 	}
 	
 	public void setPayment(double payment) {
-		this.payment = new Field(FieldType.FINAL,payment);
+		this.payment = new Field(FieldType.PAYMENT,payment);
 	}
-	
+
+
+	// initial=(final+payment)/(1+mpr)
+	// mpr=((final+payment)/initial)-1
+	// payment=(initial*(1+mpr))-final
+	// final=(initial*(1+mpr))-payment
 	public boolean calculatePayment() {
 		if(!(this.getNumNullFields() > 1)) {
-			this.setPayment(this.getInitialValue()-(this.getFinalValue()/(1+this.getAPR())));
+			this.setPayment((this.getInitialValue()*(1+this.getMPR()))-this.getFinalValue());
 			return true;
 		}
 		else {
@@ -103,14 +123,23 @@ public class Month {
 	public void setFinalValue(double finalValue) {
 		this.finalValue = new Field(FieldType.FINAL,finalValue);
 	}
-	
+
+
+	// initial=(final+payment)/(1+mpr)
+	// mpr=((final+payment)/initial)-1
+	// payment=(initial*(1+mpr))-final
+	// final=(initial*(1+mpr))-payment
 	public boolean calculateFinalValue() {
 		if(!(this.getNumNullFields() > 1)) {
-			this.setFinalValue((this.getInitialValue()-this.getPayment())*(1+this.getAPR()));
+			this.setFinalValue((this.getInitialValue()*(1+this.getMPR()))-this.getPayment());
 			return true;
 		}
 		else {
 			return false;
 		}
+	}
+	
+	public String toString() {
+		return "[" + this.initialValue + " + " + this.mpr + " - " + this.payment + " = " + this.finalValue + "]";
 	}
 }
