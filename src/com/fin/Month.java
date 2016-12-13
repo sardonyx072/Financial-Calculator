@@ -8,6 +8,14 @@ public class Month {
 	
 	//payment=(initial*apr)/(1-(1/(1+r)^2))
 	
+	//principal=payment((1-(1+i)^-n)/i) *********** this one to find payments
+	
+	//how to find out total interest paid? (so that I can error check and account for pennies)
+	//total paid is above equation multiply payments * n
+	
+	//http://brownmath.com/bsci/loan.htm
+	//http://mathforum.org/dr.math/faq/faq.interest.html
+	
 	// (initial-payment)*(1+apr)=final
 
 	// initial=(final+payment)/(1+mpr)
