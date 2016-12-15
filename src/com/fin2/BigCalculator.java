@@ -1,6 +1,8 @@
-package com.fin;
+package com.fin2;
 
 import java.math.BigDecimal;
+import java.math.MathContext;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -64,14 +66,40 @@ public class BigCalculator {
 		this.trueInitialPrinciple = new BigDecimal(initialPrinciple);
 		this.trueAPR = new BigDecimal(apr);
 		this.trueNumberOfPayments = new BigDecimal(numberOfPayments);
-		double mpr = apr/12;
-		//calculate payment value
 		this.months = new ArrayList<Month>();
+		if (apr == 0) {
+			this.truePaymentAmount = this.trueInitialPrinciple.divide(this.trueNumberOfPayments);
+		}
+		else {
+			//calculate payment value
+			/* (2) Payment amount on a loan
+			 *          rA
+			 * P = ------------
+			 *     1-((1+r)^-N)
+			 */
+			BigDecimal mpr = new BigDecimal(apr/12);
+			BigDecimal mprMult = mpr.add(new BigDecimal(1+(apr/12)));
+			this.truePaymentAmount = new BigDecimal(initialPrinciple*apr/12).divide(new BigDecimal(1).subtract(mprMult.pow(-1*numberOfPayments))); //TODO: cannot do -N exponent
+			BigDecimal trueTotalPayment = this.truePaymentAmount.multiply(this.trueNumberOfPayments);
+			int actualPaymentBase = this.truePaymentAmount.multiply(new BigDecimal(100)).intValue();
+			int missedMoney = trueTotalPayment.multiply(new BigDecimal(100)).subtract(new BigDecimal(actualPaymentBase*(numberOfPayments-1))).round(new MathContext(2,RoundingMode.UP)).intValue();
+			BigDecimal runningBalance = this.trueInitialPrinciple;
+			BigDecimal runningInterest = new BigDecimal(0);
+			for(int i = 0; i < numberOfPayments; i++) {
+				BigDecimal interest = runningBalance.multiply(mprMult);
+				runningInterest=runningInterest.add(interest);
+				double paymentThisPeriod = (actualPaymentBase + (i == numberOfPayments-1 ? missedMoney : 0))/100.0;
+				BigDecimal endingBalance = runningBalance.add(interest).subtract(new BigDecimal(paymentThisPeriod));
+				this.months.add(new Month(runningBalance.doubleValue(),interest.doubleValue(),runningInterest.doubleValue(),paymentThisPeriod,0,endingBalance.doubleValue()));
+				runningBalance = endingBalance;
+			}
+		}
 	}
 	public BigCalculator (double initialPrinciple, double apr, double paymentAmount) {
 		this.trueInitialPrinciple = new BigDecimal(initialPrinciple);
 		this.trueAPR = new BigDecimal(apr);
 		this.truePaymentAmount = new BigDecimal(paymentAmount);
+		double mpr = apr/12;
 		//calculate number of payments
 		this.months = new ArrayList<Month>();
 	}
@@ -86,7 +114,15 @@ public class BigCalculator {
 		this.trueNumberOfPayments = new BigDecimal(numberOfPayments);
 		this.truePaymentAmount = new BigDecimal(paymentAmount);
 		this.trueAPR = new BigDecimal(apr);
+		double mpr = apr/12;
 		//calculate initial principle
 		this.months = new ArrayList<Month>();
+	}
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		for (int i = 0; i < this.months.size(); i++) {
+			builder.append(this.months.get(i).toString());
+		}
+		return builder.toString();
 	}
 }
