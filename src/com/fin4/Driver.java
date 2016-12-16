@@ -26,7 +26,7 @@ public class Driver {
 //		Calculator calc8 = new Calculator(5,20250.69,0.00); //calculate starting principle
 //		System.out.println(calc8);
 //		System.out.println();
-		Calculator calc8 = new Calculator(1000.00,10.00,1010.00); //calculate starting principle
+		Calculator calc8 = new Calculator(1.00,100.00,1.00); //calculate starting principle
 		System.out.println(calc8);
 		System.out.println();
 	}
