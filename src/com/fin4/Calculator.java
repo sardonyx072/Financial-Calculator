@@ -82,6 +82,9 @@ public class Calculator {
 		BigDecimal precisePayment;
 		BigDecimal basePayment;
 		int extra;
+		if (initialBalance <= 0 || apr < 0 || numberOfMonths <= 0) {
+			throw new IllegalArgumentException("Invalid arguments!");
+		}
 		if (apr == 0) {
 			precisePayment = startBalance.divide(new BigDecimal(numberOfMonths),CONTEXT_UP);
 		}
@@ -118,6 +121,9 @@ public class Calculator {
 		this.months = new ArrayList<Month>();
 		this.initialBalance = initialBalance;
 		this.apr = apr;
+		if (initialBalance <= 0 || apr < 0 || payment <= 0) {
+			throw new IllegalArgumentException("Invalid arguments!");
+		}
 		BigDecimal startBalance = new BigDecimal(initialBalance*100);
 		BigDecimal totalInterest = new BigDecimal(0);
 		double mpr = apr/100/12;
@@ -152,6 +158,9 @@ public class Calculator {
 		this.initialBalance = initialBalance;
 		BigDecimal startBalance = new BigDecimal(initialBalance*100);
 		BigDecimal totalInterest = new BigDecimal(0);
+		if (initialBalance <= 0 || numberOfMonths <= 0 || payment <= 0) {
+			throw new IllegalArgumentException("Invalid arguments!");
+		}
 		BigDecimal u = new BigDecimal(payment*100*numberOfMonths).divide(startBalance,CONTEXT_UP).subtract(new BigDecimal(1)).divide(new BigDecimal(1+numberOfMonths),CONTEXT_UP);
 		BigDecimal rEst = new BigDecimal(2).multiply(u).add(
 				new BigDecimal(2).multiply(u).multiply(u).multiply(new BigDecimal(numberOfMonths-1)).multiply(
@@ -182,9 +191,12 @@ public class Calculator {
 		this.apr = apr;
 		double mpr = apr/100/12;
 		BigDecimal startBalance;
+		if (numberOfMonths <= 0 || payment <= 0 || apr < 0) {
+			throw new IllegalArgumentException("Invalid arguments!");
+		}
 		if (apr == 0) {
-			this.initialBalance = payment*numberOfMonths*100;
-			startBalance = new BigDecimal(this.initialBalance);
+			this.initialBalance = payment*numberOfMonths;
+			startBalance = new BigDecimal(this.initialBalance*100);
 		}
 		else {
 			startBalance = new BigDecimal(payment*100).divide(new BigDecimal(mpr),CONTEXT_UP).multiply(new BigDecimal(1).subtract(new BigDecimal(1).divide(new BigDecimal(Math.pow(1+mpr, numberOfMonths)),CONTEXT_UP)));
