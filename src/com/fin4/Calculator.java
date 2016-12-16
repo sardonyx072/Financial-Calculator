@@ -200,6 +200,18 @@ public class Calculator {
 			startBalance = endBalance;
 		}
 	}
+	public double getInitialValue() {
+		return this.initialBalance;
+	}
+	public double getAPR() {
+		return this.apr;
+	}
+	public int getNumberOfMonths() {
+		return this.months.size();
+	}
+	public List<Month> getMonths() {
+		return this.months;
+	}
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
 		builder.append("loan calculator for " + NumberFormat.getCurrencyInstance().format(initialBalance) + " at " + NumberFormat.getPercentInstance().format(apr/100.0) + " compounded monthly:\n");
