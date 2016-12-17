@@ -22,20 +22,40 @@ public class Month {
 	public BigDecimal getStartBalance() {
 		return this.startBalance;
 	}
+	public String getStartBalanceFormatted() {
+		NumberFormat f = NumberFormat.getCurrencyInstance();
+		return f.format(startBalance.setScale(2,RoundingMode.HALF_UP).doubleValue());
+	}
 	public BigDecimal getInterest() {
 		return this.interest;
+	}
+	public String getInterestFormatted() {
+		NumberFormat f = NumberFormat.getCurrencyInstance();
+		return f.format(interest.setScale(2,RoundingMode.HALF_UP).doubleValue());
 	}
 	public BigDecimal getTotalInterest() {
 		return this.totalInterest;
 	}
+	public String getTotalInterestFormatted() {
+		NumberFormat f = NumberFormat.getCurrencyInstance();
+		return f.format(totalInterest.setScale(2,RoundingMode.HALF_UP).doubleValue());
+	}
 	public BigDecimal getPayment() {
 		return this.payment;
+	}
+	public String getPaymentFormatted() {
+		NumberFormat f = NumberFormat.getCurrencyInstance();
+		return f.format(payment.setScale(2,RoundingMode.HALF_UP).doubleValue());
 	}
 	public BigDecimal getEndBalance() {
 		return this.endBalance;
 	}
+	public String getEndBalanceFormatted() {
+		NumberFormat f = NumberFormat.getCurrencyInstance();
+		return f.format(endBalance.setScale(2,RoundingMode.HALF_UP).doubleValue());
+	}
 	public String toString() {
 		NumberFormat f = NumberFormat.getCurrencyInstance();
-		return f.format(startBalance.setScale(2,RoundingMode.HALF_UP).doubleValue()) + "\t" + f.format(interest.setScale(2,RoundingMode.HALF_UP).doubleValue()) + "\t" + f.format(totalInterest.setScale(2,RoundingMode.HALF_UP).doubleValue()) + "\t" + f.format(payment.setScale(2,RoundingMode.HALF_UP).doubleValue()) + "\t" + f.format(endBalance.setScale(2,RoundingMode.HALF_UP).doubleValue());
+		return this.getStartBalanceFormatted() + "\t" + this.getInterestFormatted() + "\t" + this.getTotalInterestFormatted() + "\t" + this.getPaymentFormatted() + "\t" + this.getEndBalanceFormatted();
 	}
 }

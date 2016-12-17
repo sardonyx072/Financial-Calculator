@@ -226,10 +226,88 @@ public class Calculator {
 	}
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
+		int monthColLongest = "Month ".length();
+		int startColLongest = "Starting Balance ".length();
+		int interColLongest = "Interest ".length();
+		int totInColLongest = "Total Interest ".length();
+		int pymntColLongest = "Payment ".length();
+		int endBaColLongest = "Ending Balance ".length();
+		for (int i = 0; i < this.months.size(); i++) {
+			monthColLongest = Math.max(monthColLongest, (i + ".").length() + 1);
+			startColLongest = Math.max(startColLongest, this.months.get(i).getStartBalanceFormatted().length() + 1);
+			interColLongest = Math.max(interColLongest, this.months.get(i).getInterestFormatted().length() + 1);
+			totInColLongest = Math.max(totInColLongest, this.months.get(i).getTotalInterestFormatted().length() + 1);
+			pymntColLongest = Math.max(pymntColLongest, this.months.get(i).getPaymentFormatted().length() + 1);
+			endBaColLongest = Math.max(endBaColLongest, this.months.get(i).getEndBalanceFormatted().length() + 1);
+		}
+		
 		builder.append("loan calculator for " + NumberFormat.getCurrencyInstance().format(initialBalance) + " at " + NumberFormat.getPercentInstance().format(apr/100.0) + " compounded monthly:\n");
-		builder.append("month \tstartbalance \tinterest \ttotalinterest \tpayment \tendbalance\n");
-		for(int i = 0; i < this.months.size(); i++) {
-			builder.append((i == 0 ? "" : "\n") + (i+1) + ". \t" + this.months.get(i));
+		for(int i = -1; i < this.months.size(); i++) {
+			if (i == -1) {
+				String monthCol = "Month ";
+				builder.append(monthCol);
+				for (int j = monthCol.length(); j < monthColLongest; j++) {
+					builder.append(' ');
+				}
+				String startCol = "Starting Balance ";
+				builder.append(startCol);
+				for (int j = startCol.length(); j < startColLongest; j++) {
+					builder.append(' ');
+				}
+				String interCol = "Interest ";
+				builder.append(interCol);
+				for (int j = interCol.length(); j < interColLongest; j++) {
+					builder.append(' ');
+				}
+				String totInCol = "Total Interest ";
+				builder.append(totInCol);
+				for (int j = totInCol.length(); j < totInColLongest; j++) {
+					builder.append(' ');
+				}
+				String pymntCol = "Payment ";
+				builder.append(pymntCol);
+				for (int j = pymntCol.length(); j < pymntColLongest; j++) {
+					builder.append(' ');
+				}
+				String endBaCol = "Ending Balance ";
+				builder.append(endBaCol);
+				for (int j = endBaCol.length(); j < endBaColLongest; j++) {
+					builder.append(' ');
+				}
+			}
+			else {
+				builder.append('\n');
+				String monthCol = (i+1) + ".";
+				builder.append(monthCol);
+				for (int j = monthCol.length(); j < monthColLongest; j++) {
+					builder.append(' ');
+				}
+				String startCol = this.months.get(i).getStartBalanceFormatted();
+				builder.append(startCol);
+				for (int j = startCol.length(); j < startColLongest; j++) {
+					builder.append(' ');
+				}
+				String interCol = this.months.get(i).getInterestFormatted();
+				builder.append(interCol);
+				for (int j = interCol.length(); j < interColLongest; j++) {
+					builder.append(' ');
+				}
+				String totInCol = this.months.get(i).getTotalInterestFormatted();
+				builder.append(totInCol);
+				for (int j = totInCol.length(); j < totInColLongest; j++) {
+					builder.append(' ');
+				}
+				String pymntCol = this.months.get(i).getPaymentFormatted();
+				builder.append(pymntCol);
+				for (int j = pymntCol.length(); j < pymntColLongest; j++) {
+					builder.append(' ');
+				}
+				String endBaCol = this.months.get(i).getEndBalanceFormatted();
+				builder.append(endBaCol);
+				for (int j = endBaCol.length(); j < endBaColLongest; j++) {
+					builder.append(' ');
+				}
+			}
 		}
 		return builder.toString();
 	}
