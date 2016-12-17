@@ -1,153 +1,61 @@
 package com.fin;
 
+import java.math.BigDecimal;
+import java.math.MathContext;
+import java.math.RoundingMode;
+import java.text.NumberFormat;
+
 public class Month {
-	private Field initialValue;
-	private Field mpr;
-	private Field payment;
-	private Field finalValue;
+	private BigDecimal startBalance;
+	private BigDecimal interest;
+	private BigDecimal totalInterest;
+	private BigDecimal payment;
+	private BigDecimal endBalance;
 	
-	//payment=(initial*apr)/(1-(1/(1+r)^2))
-	
-	//principal=payment((1-(1+i)^-n)/i) *********** this one to find payments
-	
-	//how to find out total interest paid? (so that I can error check and account for pennies)
-	//total paid is above equation multiply payments * n
-	
-	//http://brownmath.com/bsci/loan.htm
-	//http://mathforum.org/dr.math/faq/faq.interest.html
-	
-	// (initial-payment)*(1+apr)=final
-
-	// initial=(final+payment)/(1+mpr)
-	// mpr=((final+payment)/initial)-1
-	// payment=(initial*(1+mpr))-final
-	// final=(initial*(1+mpr))-payment
-	
-	public Month(Field...fields) {
-		for (Field field : fields) {
-			switch(field.getType()) {
-			case INITIAL:
-				this.initialValue = field;
-				break;
-			case MPR:
-				this.mpr = field;
-				break;
-			case PAYMENT:
-				this.payment = field;
-				break;
-			case FINAL:
-				this.finalValue = field;
-				break;
-			}
-		}
+	public Month(BigDecimal startBalance, BigDecimal interest, BigDecimal totalInterest, BigDecimal payment, BigDecimal endBalance) {
+		this.startBalance = startBalance.divide(new BigDecimal(100), new MathContext(100,RoundingMode.DOWN));
+		this.interest = interest.divide(new BigDecimal(100), new MathContext(100,RoundingMode.DOWN));
+		this.totalInterest = totalInterest.divide(new BigDecimal(100), new MathContext(100,RoundingMode.DOWN));
+		this.payment = payment.divide(new BigDecimal(100), new MathContext(100,RoundingMode.DOWN));
+		this.endBalance = endBalance.divide(new BigDecimal(100), new MathContext(100,RoundingMode.DOWN));
 	}
-	
-	public int getNumNullFields() {
-		int i = 0;
-		if(this.initialValue == null)
-			i++;
-		if(this.mpr == null)
-			i++;
-		if(this.payment == null)
-			i++;
-		if(this.finalValue == null)
-			i++;
-		return i;
+	public BigDecimal getStartBalance() {
+		return this.startBalance;
 	}
-	
-	public double getInitialValue() {
-		return this.initialValue.getValue();
+	public String getStartBalanceFormatted() {
+		NumberFormat f = NumberFormat.getCurrencyInstance();
+		return f.format(startBalance.setScale(2,RoundingMode.HALF_UP).doubleValue());
 	}
-	
-	public void setInitialValue(double initialValue) {
-		this.initialValue = new Field(FieldType.INITIAL,initialValue);
+	public BigDecimal getInterest() {
+		return this.interest;
 	}
-
-
-	// initial=(final+payment)/(1+mpr)
-	// mpr=((final+payment)/initial)-1
-	// payment=(initial*(1+mpr))-final
-	// final=(initial*(1+mpr))-payment
-	public boolean calculateInitialValue() {
-		if(!(this.getNumNullFields() > 1)) {
-			this.setInitialValue((this.getFinalValue()+this.getPayment())/(1+this.getMPR()));
-			return true;
-		}
-		else {
-			return false;
-		}
+	public String getInterestFormatted() {
+		NumberFormat f = NumberFormat.getCurrencyInstance();
+		return f.format(interest.setScale(2,RoundingMode.HALF_UP).doubleValue());
 	}
-	
-	public double getMPR() {
-		return this.mpr.getValue();
+	public BigDecimal getTotalInterest() {
+		return this.totalInterest;
 	}
-	
-	public void setMPR(double mpr) {
-		this.mpr = new Field(FieldType.MPR,mpr);
+	public String getTotalInterestFormatted() {
+		NumberFormat f = NumberFormat.getCurrencyInstance();
+		return f.format(totalInterest.setScale(2,RoundingMode.HALF_UP).doubleValue());
 	}
-
-
-	// initial=(final+payment)/(1+mpr)
-	// mpr=((final+payment)/initial)-1
-	// payment=(initial*(1+mpr))-final
-	// final=(initial*(1+mpr))-payment
-	public boolean calculateMPR() {
-		if(!(this.getNumNullFields() > 1)) {
-			this.setMPR(((this.getFinalValue()+this.getPayment())/this.getInitialValue())-1);
-			return true;
-		}
-		else {
-			return false;
-		}
+	public BigDecimal getPayment() {
+		return this.payment;
 	}
-	
-	public double getPayment() {
-		return this.payment.getValue();
+	public String getPaymentFormatted() {
+		NumberFormat f = NumberFormat.getCurrencyInstance();
+		return f.format(payment.setScale(2,RoundingMode.HALF_UP).doubleValue());
 	}
-	
-	public void setPayment(double payment) {
-		this.payment = new Field(FieldType.PAYMENT,payment);
+	public BigDecimal getEndBalance() {
+		return this.endBalance;
 	}
-
-
-	// initial=(final+payment)/(1+mpr)
-	// mpr=((final+payment)/initial)-1
-	// payment=(initial*(1+mpr))-final
-	// final=(initial*(1+mpr))-payment
-	public boolean calculatePayment() {
-		if(!(this.getNumNullFields() > 1)) {
-			this.setPayment((this.getInitialValue()*(1+this.getMPR()))-this.getFinalValue());
-			return true;
-		}
-		else {
-			return false;
-		}
+	public String getEndBalanceFormatted() {
+		NumberFormat f = NumberFormat.getCurrencyInstance();
+		return f.format(endBalance.setScale(2,RoundingMode.HALF_UP).doubleValue());
 	}
-	
-	public double getFinalValue() {
-		return this.finalValue.getValue();
-	}
-	
-	public void setFinalValue(double finalValue) {
-		this.finalValue = new Field(FieldType.FINAL,finalValue);
-	}
-
-
-	// initial=(final+payment)/(1+mpr)
-	// mpr=((final+payment)/initial)-1
-	// payment=(initial*(1+mpr))-final
-	// final=(initial*(1+mpr))-payment
-	public boolean calculateFinalValue() {
-		if(!(this.getNumNullFields() > 1)) {
-			this.setFinalValue((this.getInitialValue()*(1+this.getMPR()))-this.getPayment());
-			return true;
-		}
-		else {
-			return false;
-		}
-	}
-	
 	public String toString() {
-		return "[" + this.initialValue + " + " + this.mpr + " - " + this.payment + " = " + this.finalValue + "]";
+		NumberFormat f = NumberFormat.getCurrencyInstance();
+		return this.getStartBalanceFormatted() + "\t" + this.getInterestFormatted() + "\t" + this.getTotalInterestFormatted() + "\t" + this.getPaymentFormatted() + "\t" + this.getEndBalanceFormatted();
 	}
 }

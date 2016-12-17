@@ -1,4 +1,4 @@
-package com.fin4;
+package com.fin;
 
 import static org.junit.Assert.*;
 
